@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class RaceTest {
     public static void main(String[] param){
         Horse horse1 = new Horse('1', "Horse1", 0.5);
@@ -9,6 +11,25 @@ public class RaceTest {
         race.addHorse(horse2, 2);
         race.addHorse(horse3, 3);
 
-        race.startRace();
+        String runAgain = "y";
+        Scanner scanner = new Scanner(System.in);
+
+        while(runAgain.equals("y")) {
+            race.startRace();
+
+            printHorseDetails(horse1);
+            printHorseDetails(horse2);
+            printHorseDetails(horse3);
+
+            System.out.println("Run again? (y/n)");
+            runAgain = scanner.nextLine();
+
+        }
+
+    }
+
+    public static void printHorseDetails(Horse horse){
+        System.out.println(horse.getName() + " details:\n");
+        HorseTest.printHorseDetails(horse);
     }
 }

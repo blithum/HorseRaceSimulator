@@ -83,7 +83,7 @@ public class Race
             //print the race positions
             printRace();
             
-            //if any of the three horses has won the race is finished
+            //if any of the three horses has won announce the winner
             if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
             {
                 finished = true;
@@ -199,7 +199,7 @@ public class Race
         //and after the horse
         int spacesBefore = theHorse.getDistanceTravelled();
         int spacesAfter = raceLength - theHorse.getDistanceTravelled();
-        
+
         //print a | for the beginning of the lane
         System.out.print('|');
         
@@ -210,7 +210,7 @@ public class Race
         //else print the horse's symbol
         if(theHorse.hasFallen())
         {
-            System.out.print('\u2322');
+            System.out.print('\u274C');
         }
         else
         {
