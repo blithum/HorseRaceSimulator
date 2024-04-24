@@ -79,5 +79,9 @@ public class Horse
     {
         symbol = newSymbol;
     }
+
+    public void standUp() {
+        fallen = false;
+    }
     
 }

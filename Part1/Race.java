@@ -72,7 +72,12 @@ public class Race
         lane1Horse.goBackToStart();
         lane2Horse.goBackToStart();
         lane3Horse.goBackToStart();
-                      
+
+        //reset all horses to not fallen
+        lane1Horse.standUp();
+        lane2Horse.standUp();
+        lane3Horse.standUp();
+
         while (!finished && !allHorsesFallen)
         {
             //move each horse
@@ -142,6 +147,12 @@ public class Race
             if (Math.random() < (0.1*theHorse.getConfidence()*theHorse.getConfidence()))
             {
                 theHorse.fall();
+                if(!(theHorse.getConfidence() - 0.05 < 0)) {
+                    theHorse.setConfidence(theHorse.getConfidence() - 0.05);
+                }
+                else{
+                    theHorse.setConfidence(0);
+                }
             }
         }
     }
@@ -156,6 +167,12 @@ public class Race
     {
         if (theHorse.getDistanceTravelled() == raceLength)
         {
+            if(!(theHorse.getConfidence() + 0.05 > 1)) {
+                theHorse.setConfidence(theHorse.getConfidence() + 0.05);
+            }
+            else{
+                theHorse.setConfidence(1);
+            }
             return true;
         }
         else
