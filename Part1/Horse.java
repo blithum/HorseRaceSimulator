@@ -19,7 +19,6 @@ public class Horse
     /**
      * Constructor for objects of class Horse
      */
-    private Horse(){}
 
     public Horse(char horseSymbol, String horseName, double horseConfidence)
     {

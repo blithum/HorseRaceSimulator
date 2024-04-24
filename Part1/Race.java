@@ -66,13 +66,14 @@ public class Race
     {
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
+        boolean allHorsesFallen = false;
         
         //reset all the lanes (all horses not fallen and back to 0). 
         lane1Horse.goBackToStart();
         lane2Horse.goBackToStart();
         lane3Horse.goBackToStart();
                       
-        while (!finished)
+        while (!finished && !allHorsesFallen)
         {
             //move each horse
             moveHorse(lane1Horse);
@@ -86,8 +87,28 @@ public class Race
             if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
             {
                 finished = true;
+                //print the winner
+                if (raceWonBy(lane1Horse))
+                {
+                    System.out.println(lane1Horse.getName() + " wins!");
+                }
+                else if (raceWonBy(lane2Horse))
+                {
+                     System.out.println(lane2Horse.getName() + " wins!");
+                }
+                else if (raceWonBy(lane3Horse))
+                {
+                     System.out.println(lane3Horse.getName() + " wins!");
+                }
+
             }
-           
+
+            //checks if all horses have fallen
+            if (lane1Horse.hasFallen() && lane2Horse.hasFallen() && lane3Horse.hasFallen()){
+                allHorsesFallen = true;
+                System.out.println("All horses have fallen!");
+            }
+
             //wait for 100 milliseconds
             try{ 
                 TimeUnit.MILLISECONDS.sleep(100);
