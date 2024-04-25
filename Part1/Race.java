@@ -67,7 +67,7 @@ public class Race
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
         boolean allHorsesFallen = false;
-        
+
         //reset all the lanes (all horses not fallen and back to 0). 
         lane1Horse.goBackToStart();
         lane2Horse.goBackToStart();
@@ -87,22 +87,46 @@ public class Race
                         
             //print the race positions
             printRace();
-            
+
+            //check for a tie
+            if (raceWonBy(lane1Horse) && raceWonBy(lane2Horse) ||raceWonBy(lane2Horse) && raceWonBy(lane3Horse) || raceWonBy(lane1Horse) && raceWonBy(lane3Horse))
+            {
+                finished = true;
+                System.out.println("It's a tie!");
+            }
             //if any of the three horses has won announce the winner
-            if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
+            else if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
             {
                 finished = true;
                 //print the winner
                 if (raceWonBy(lane1Horse))
                 {
+                    if(!(lane1Horse.getConfidence() + 0.05 > 0.95)) {
+                        lane1Horse.setConfidence(lane1Horse.getConfidence() + 0.05);
+                    }
+                    else{
+                        lane1Horse.setConfidence(0.95);
+                    }
                     System.out.println(lane1Horse.getName() + " wins!");
                 }
                 else if (raceWonBy(lane2Horse))
                 {
+                    if(!(lane2Horse.getConfidence() + 0.05 > 0.95)) {
+                        lane2Horse.setConfidence(lane2Horse.getConfidence() + 0.05);
+                    }
+                    else{
+                        lane2Horse.setConfidence(0.95);
+                    }
                      System.out.println(lane2Horse.getName() + " wins!");
                 }
                 else if (raceWonBy(lane3Horse))
                 {
+                    if(!(lane3Horse.getConfidence() + 0.05 > 0.95)) {
+                        lane3Horse.setConfidence(lane3Horse.getConfidence() + 0.05);
+                    }
+                    else{
+                        lane3Horse.setConfidence(0.95);
+                    }
                      System.out.println(lane3Horse.getName() + " wins!");
                 }
 
@@ -144,14 +168,14 @@ public class Race
             //the probability that the horse will fall is very small (max is 0.1)
             //but will also will depends exponentially on confidence 
             //so if you double the confidence, the probability that it will fall is *2
-            if (Math.random() < (0.1*theHorse.getConfidence()*theHorse.getConfidence()))
+            if ((Math.random() < (0.1*theHorse.getConfidence()*theHorse.getConfidence())) && !raceWonBy(theHorse))
             {
                 theHorse.fall();
-                if(!(theHorse.getConfidence() - 0.05 < 0)) {
+                if(!(theHorse.getConfidence() - 0.05 < 0.05)) {
                     theHorse.setConfidence(theHorse.getConfidence() - 0.05);
                 }
                 else{
-                    theHorse.setConfidence(0);
+                    theHorse.setConfidence(0.05);
                 }
             }
         }
@@ -167,12 +191,6 @@ public class Race
     {
         if (theHorse.getDistanceTravelled() == raceLength)
         {
-            if(!(theHorse.getConfidence() + 0.05 > 1)) {
-                theHorse.setConfidence(theHorse.getConfidence() + 0.05);
-            }
-            else{
-                theHorse.setConfidence(1);
-            }
             return true;
         }
         else
