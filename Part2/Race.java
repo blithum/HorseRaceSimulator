@@ -15,6 +15,7 @@ public class Race
     private int raceNumber;
     private ArrayList<Horse> horses;
     private ArrayList<String> raceResults = new ArrayList<>();
+    private Horse winningHorse;
 
     /**
      * Constructor for objects of class Race
@@ -56,7 +57,9 @@ public class Race
         return raceResults;
     }
     //retrieve race results
-
+    public Horse getWinningHorse() {
+        return winningHorse;
+    }
     /**
      * Start the race
      * The horse are brought to the start and
@@ -98,6 +101,7 @@ public class Race
                 finished = true;
                 System.out.println("It's a tie!");
                 raceNumber++;
+                winningHorse = null;
                 raceResults.add("\nRace Number: " + raceNumber + " Time: " + String.format("%.2f", timePassed) + "s" + "\n");
                 raceResults.add("\nThis race had a distance of : " + raceLength + "m" + "\n");
                 raceResults.add("\nThis race ended in a tie.");
@@ -117,6 +121,7 @@ public class Race
                         }
                         System.out.println(horse.getName() + " wins!");
                         raceNumber++;
+                        winningHorse = horse;
                         horse.increaseWins();
                         raceResults.add("\nRace Number: " + raceNumber + " Time: " + String.format("%.2f", timePassed) + "s" + "\n");
                         raceResults.add("\nThis race had a distance of : " + raceLength + "m" + "\n");
@@ -136,6 +141,7 @@ public class Race
             if (allHorsesFallen){
                 System.out.println("All horses have fallen!");
                 raceNumber++;
+                winningHorse = null;
                 raceResults.add("\nRace Number: " + raceNumber + " Time: " + String.format("%.2f", timePassed) + "s" + "\n");
                 raceResults.add("\nThis race had a distance of : " + raceLength + "m" + "\n");
                 raceResults.add("\nAll horses fell in this race so there was no winner.");

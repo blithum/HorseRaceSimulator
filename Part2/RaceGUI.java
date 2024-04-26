@@ -21,6 +21,14 @@ public class RaceGUI extends JFrame {
     //statistics
     private JButton statsButton;
 
+    //Betting System
+    private JButton betButton;
+    private int wins;
+    private int losses;
+    private ArrayList<Horse> selectedHorses = new ArrayList<>();
+    private Horse winningHorse;
+
+
     private Race race;
     private ArrayList<Horse> horses;
 
@@ -132,9 +140,28 @@ public class RaceGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 new Thread(() -> {
                     startButton.setEnabled(false);
+                    betButton.setEnabled(false);
                     race.startRace();
                     updateHorseLabels();
                     startButton.setEnabled(true);
+
+                    winningHorse = race.getWinningHorse();
+                    if(!selectedHorses.isEmpty()) {
+                        if (winningHorse == null) {
+                            losses++;
+                            JOptionPane.showMessageDialog(RaceGUI.this, "You lost!");
+                        } else if (selectedHorses.contains(winningHorse)) {
+                            wins++;
+                            JOptionPane.showMessageDialog(RaceGUI.this, "You won!");
+                        } else {
+                            losses++;
+                            JOptionPane.showMessageDialog(RaceGUI.this, "You lost!");
+                        }
+                    }
+                    //resets bets
+                    selectedHorses.clear();
+                    betButton.setEnabled(true);
+
                 }).start();
             }
         });
@@ -161,8 +188,64 @@ public class RaceGUI extends JFrame {
             }
         });
 
+        betButton = new JButton("Place Bet");
+        betButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame betFrame = new JFrame("Place Bet");
+                betFrame.setSize(400, 400);
+                betFrame.setLayout(new BorderLayout());
+                betFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                // Title and win/loss count
+                JLabel titleLabel = new JLabel("Place your bet! Wins: " + wins + " Losses: " + losses);
+                betFrame.add(titleLabel, BorderLayout.NORTH);
+
+                // Race statistics
+                JTextArea betArea = new JTextArea();
+                betArea.setEditable(false);
+                betFrame.add(betArea, BorderLayout.CENTER);
+
+                // List of horses
+                JPanel horsePanel = new JPanel(new GridLayout(horses.size(), 1));
+                ButtonGroup group = new ButtonGroup();
+                ArrayList<JRadioButton> radioButtons = new ArrayList<>();
+                for (Horse horse : horses) {
+                    JRadioButton radioButton = new JRadioButton(horse.getName());
+                    radioButtons.add(radioButton);
+                    group.add(radioButton);
+                    horsePanel.add(radioButton);
+                }
+                betFrame.add(horsePanel, BorderLayout.WEST);
+
+                // Submit button
+                JButton submitButton = new JButton("Submit");
+                submitButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        // Store the selected horse
+                        selectedHorses = new ArrayList<>();
+                        for (int i = 0; i < radioButtons.size(); i++) {
+                            if (radioButtons.get(i).isSelected()) {
+                                selectedHorses.add(horses.get(i));
+                                break;
+                            }
+                        }
+                        betButton.setEnabled(false);
+                        // Display a "Good luck" message and close the betting frame
+                        JOptionPane.showMessageDialog(betFrame, "Good luck!");
+                        betFrame.dispose();
+                    }
+                });
+                betFrame.add(submitButton, BorderLayout.SOUTH);
+
+                betFrame.setVisible(true);
+            }
+        });
+
         controlPanel.add(startButton);
         controlPanel.add(statsButton);
+        controlPanel.add(betButton);
 
         // Set up the Race Output Panel
         raceOutputPanel = new JPanel();

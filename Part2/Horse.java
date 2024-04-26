@@ -14,7 +14,6 @@ public class Horse
     boolean fallen;
     double confidence;
     int totalWins;
-    
       
     //Constructor of class Horse
     /**
@@ -97,5 +96,4 @@ public class Horse
     public int getTotalWins(){
         return this.totalWins;
     }
-    
 }
