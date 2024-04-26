@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class RaceGUI extends JFrame {
@@ -64,6 +65,7 @@ public class RaceGUI extends JFrame {
         }
 
 
+
         // Set up the control panel
         controlPanel = new JPanel();
         startButton = new JButton("Start");
@@ -73,6 +75,7 @@ public class RaceGUI extends JFrame {
                 new Thread(() -> {
                     startButton.setEnabled(false);
                     race.startRace();
+                    updateHorseLabels();
                     startButton.setEnabled(true);
                 }).start();
             }
@@ -83,7 +86,7 @@ public class RaceGUI extends JFrame {
         raceOutputPanel = new JPanel();
         raceOutputPanel.setBackground(new Color(243, 235, 233)); // Light Gray
         raceOutputPanel.setLayout(new BorderLayout());
-        outputRaceArea = new JTextArea(10, 30);
+        outputRaceArea = new JTextArea(6, 30);
         outputRaceArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         outputRaceArea.setEditable(false);
         outputRaceArea.setBackground(new Color(224, 224, 224)); // Light Gray
@@ -94,9 +97,25 @@ public class RaceGUI extends JFrame {
         System.setOut(new PrintStream(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
-                // redirects data to the text area
-                outputRaceArea.append(String.valueOf((char)b));
-                // scrolls the text area to the end of data
+                // Convert the int to a byte array
+                byte[] bytes = new byte[] {(byte) b};
+                // Call the write method that you've already overridden
+                write(bytes, 0, bytes.length);
+            }
+
+            @Override
+            public void write(byte[] b) throws IOException {
+                // Call the write method that you've already overridden
+                write(b, 0, b.length);
+            }
+
+            @Override
+            public void write(byte[] b, int off, int len) throws IOException {
+                // Convert the byte array to a string
+                String str = new String(b, off, len, StandardCharsets.UTF_8);
+                // Append the string to the text area
+                outputRaceArea.append(str);
+                // Scroll the text area to the end of data
                 outputRaceArea.setCaretPosition(outputRaceArea.getDocument().getLength());
             }
         }, true));
@@ -117,6 +136,22 @@ public class RaceGUI extends JFrame {
         add(raceOutputPanel, BorderLayout.SOUTH);
 
         setVisible(true);
+    }
+
+    private void updateHorseLabels() {
+        for (int i = 0; i < horses.size(); i++) {
+            // Get the existing labels from the GUI
+            Component[] components = horsePanel.getComponents();
+            JLabel horseName = (JLabel) components[i * 3];
+            JLabel horseSymbol = (JLabel) components[i * 3 + 1];
+            JLabel horseConfidence = (JLabel) components[i * 3 + 2];
+
+            // Update the labels
+            horseName.setText(horses.get(i).getName());
+            horseSymbol.setText(String.valueOf(horses.get(i).getSymbol()));
+            //round confidence to 2 decimal places
+            horseConfidence.setText(String.format("%.2f", (horses.get(i).getConfidence())));
+        }
     }
 
     private void updateRaceTrack() {
