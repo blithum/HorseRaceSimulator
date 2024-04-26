@@ -12,7 +12,9 @@ import java.util.ArrayList;
 public class Race
 {
     private int raceLength;
+    private int raceNumber;
     private ArrayList<Horse> horses;
+    private ArrayList<String> raceResults = new ArrayList<>();
 
     /**
      * Constructor for objects of class Race
@@ -50,6 +52,11 @@ public class Race
             raceLength = newLength;
         }
     }
+    public ArrayList<String> getRaceResults() {
+        return raceResults;
+    }
+    //retrieve race results
+
     /**
      * Start the race
      * The horse are brought to the start and
@@ -62,6 +69,7 @@ public class Race
         boolean finished = false;
         boolean allHorsesFallen = false;
         int winCount = 0;
+        double timePassed = 0;
 
         //reset all the lanes (all horses not fallen and back to 0). 
         for (Horse horse : horses) {
@@ -89,6 +97,12 @@ public class Race
             {
                 finished = true;
                 System.out.println("It's a tie!");
+                raceNumber++;
+                raceResults.add("\nRace Number: " + raceNumber + " Time: " + String.format("%.2f", timePassed) + "s" + "\n");
+                raceResults.add("\nThis race had a distance of : " + raceLength + "m" + "\n");
+                raceResults.add("\nThis race ended in a tie.");
+
+
             }
             //if any of the three horses has won announce the winner
             else {
@@ -102,6 +116,11 @@ public class Race
                             horse.setConfidence(0.95);
                         }
                         System.out.println(horse.getName() + " wins!");
+                        raceNumber++;
+                        horse.increaseWins();
+                        raceResults.add("\nRace Number: " + raceNumber + " Time: " + String.format("%.2f", timePassed) + "s" + "\n");
+                        raceResults.add("\nThis race had a distance of : " + raceLength + "m" + "\n");
+                        raceResults.add("\nThe winner of this race was " + horse.getName() + " with a time of " + String.format("%.2f", timePassed) + "s\n");
                     }
 
                 }
@@ -116,12 +135,28 @@ public class Race
             }
             if (allHorsesFallen){
                 System.out.println("All horses have fallen!");
+                raceNumber++;
+                raceResults.add("\nRace Number: " + raceNumber + " Time: " + String.format("%.2f", timePassed) + "s" + "\n");
+                raceResults.add("\nThis race had a distance of : " + raceLength + "m" + "\n");
+                raceResults.add("\nAll horses fell in this race so there was no winner.");
+
+
             }
 
             //wait for 100 milliseconds
             try{ 
                 TimeUnit.MILLISECONDS.sleep(100);
+                timePassed += 0.1;
             }catch(Exception e){}
+        }
+
+        for (Horse horse : horses) {
+            // create a string of some stats for each horse
+            raceResults.add("\n" + horse.getName() + " finished at " + horse.getDistanceTravelled() + "m\n");
+            raceResults.add("Confidence: " + horse.getConfidence() + "\n");
+            raceResults.add("Total Wins: " + horse.getTotalWins() + "\n");
+            raceResults.add("Fallen: " + horse.hasFallen() + "\n");
+            raceResults.add("Average speed: " + String.format("%.3f", (horse.getDistanceTravelled() / timePassed)) + "m/s\n");
         }
     }
     

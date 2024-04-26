@@ -13,6 +13,7 @@ public class Horse
     int distanceTravelled;
     boolean fallen;
     double confidence;
+    int totalWins;
     
       
     //Constructor of class Horse
@@ -87,6 +88,14 @@ public class Horse
     public void resetName(String newName)
     {
         name = newName;
+    }
+
+    public void increaseWins(){
+        totalWins++;
+    }
+
+    public int getTotalWins(){
+        return this.totalWins;
     }
     
 }

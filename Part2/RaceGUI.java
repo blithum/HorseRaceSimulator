@@ -19,7 +19,6 @@ public class RaceGUI extends JFrame {
     private JTextArea outputRaceArea;
 
     //statistics
-    private JFrame statsFrame = new JFrame("Statistics");
     private JButton statsButton;
 
     private Race race;
@@ -144,11 +143,21 @@ public class RaceGUI extends JFrame {
         statsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JFrame statsFrame = new JFrame("Statistics");
                 statsFrame.setSize(400, 400);
                 statsFrame.setLayout(new BorderLayout());
-                statsFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                statsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                JTextArea statsArea = new JTextArea();
+                statsArea.setEditable(false);
+
+                statsArea.setText("");
+                ArrayList<String> raceResults = race.getRaceResults();
+                for (String result : raceResults) {
+                    statsArea.append(result);
+                }
+                statsFrame.add(new JScrollPane(statsArea), BorderLayout.CENTER);
                 statsFrame.setVisible(true);
-                statsFrame.add(new JLabel("Statistics will be displayed here"));
             }
         });
 
