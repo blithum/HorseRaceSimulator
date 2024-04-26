@@ -2,14 +2,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 public class RaceGUI extends JFrame {
     private JPanel welcomePanel;
-    private JPanel raceTrackPanel;
+    private JPanel horsePanel;
     private JPanel controlPanel;
+    private JPanel raceOutputPanel;
     private JButton startButton;
     private JLabel[] horseLabels;
+    private JTextArea outputRaceArea;
+
     private Race race;
     private ArrayList<Horse> horses;
 
@@ -32,10 +38,10 @@ public class RaceGUI extends JFrame {
         welcomeLabel.setForeground(Color.WHITE); // White text
         welcomePanel.add(welcomeLabel);
 
-        // Set up the race track panel
-        raceTrackPanel = new JPanel();
-        raceTrackPanel.setBackground(new Color(243, 235, 233)); // Light Gray
-        raceTrackPanel.setLayout(new GridBagLayout());
+        // Set up the racetrack panel
+        horsePanel = new JPanel();
+        horsePanel.setBackground(new Color(243, 235, 233)); // Light Gray
+        horsePanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
@@ -46,15 +52,15 @@ public class RaceGUI extends JFrame {
 
             gbc.gridx = 0;
             gbc.gridy = i;
-            raceTrackPanel.add(horseName, gbc);
+            horsePanel.add(horseName, gbc);
 
             gbc.gridx = 1;
             gbc.gridy = i;
-            raceTrackPanel.add(horseSymbol, gbc);
+            horsePanel.add(horseSymbol, gbc);
 
             gbc.gridx = 2;
             gbc.gridy = i;
-            raceTrackPanel.add(horseConfidence, gbc);
+            horsePanel.add(horseConfidence, gbc);
         }
 
 
@@ -71,12 +77,44 @@ public class RaceGUI extends JFrame {
                 }).start();
             }
         });
-        controlPanel.add(startButton);
+        horsePanel.add(startButton);
+
+        // Set up the Race Output Panel
+        raceOutputPanel = new JPanel();
+        raceOutputPanel.setBackground(new Color(243, 235, 233)); // Light Gray
+        raceOutputPanel.setLayout(new BorderLayout());
+        outputRaceArea = new JTextArea(10, 30);
+        outputRaceArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        outputRaceArea.setEditable(false);
+        outputRaceArea.setBackground(new Color(224, 224, 224)); // Light Gray
+        JScrollPane scrollPane = new JScrollPane(outputRaceArea);
+        raceOutputPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Redirect System.out to outputRaceArea
+        System.setOut(new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                // redirects data to the text area
+                outputRaceArea.append(String.valueOf((char)b));
+                // scrolls the text area to the end of data
+                outputRaceArea.setCaretPosition(outputRaceArea.getDocument().getLength());
+            }
+        }, true));
+
+        // Create a new panel with BoxLayout
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+
+        // Add horsePanel and controlPanel to the new panel
+        centerPanel.add(horsePanel);
+        centerPanel.add(controlPanel);
 
         // Add panels to the frame
         add(welcomePanel, BorderLayout.NORTH);
-        add(raceTrackPanel, BorderLayout.CENTER);
-        add(controlPanel, BorderLayout.SOUTH);
+//        add(horsePanel, BorderLayout.CENTER);
+//        add(controlPanel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+        add(raceOutputPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
