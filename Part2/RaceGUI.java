@@ -51,6 +51,54 @@ public class RaceGUI extends JFrame {
             JLabel horseSymbol = new JLabel("Horse Symbol: " + horses.get(i).getSymbol());
             JLabel horseConfidence = new JLabel("Horse Confidence: " + horses.get(i).getConfidence());
 
+            // Create the Edit Horse button for each horse
+            JButton editButton = new JButton("Edit Horse");
+            final int horseIndex = i;
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Create an array of options
+                    Object[] options = {"Edit Horse Name", "Edit Horse Symbol"};
+                    // Display a dialog with the options
+                    int choice = JOptionPane.showOptionDialog(RaceGUI.this, "What would you like to edit?",
+                            "Edit Horse", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                    // Handle the user's choice
+                    switch (choice) {
+                        case 0: // Edit Horse Name
+                            String newName = JOptionPane.showInputDialog(RaceGUI.this, "Enter new name for the horse:");
+                            if (newName == null || newName.isEmpty()){
+                                // User closed the dialog, do nothing
+                                rebuildHorsePanelAndRaceText();
+                                return;
+                            }
+                            // Update the horse's name
+                            else {
+                                Horse horse = horses.get(horseIndex);
+                                horse.resetName(newName);
+                                break;
+                            }
+                        case 1: // Edit Horse Symbol
+                            String newSymbol = JOptionPane.showInputDialog(RaceGUI.this, "Enter new symbol for the horse:");
+                            if (newSymbol == null) {
+                                // User closed the dialog, do nothing
+                                rebuildHorsePanelAndRaceText();
+                                return;
+                            }
+                            if (newSymbol != null && newSymbol.length() == 1) {
+                                // Update the horse's symbol
+                                Horse horse = horses.get(horseIndex);
+                                horse.setSymbol(newSymbol.charAt(0));
+                            }
+                            else {
+                                JOptionPane.showMessageDialog(RaceGUI.this, "Invalid input. Please enter a single character for the horse symbol.");
+                            }
+                            break;
+                    }
+                    // Rebuild the horsePanel to reflect the changes
+                    rebuildHorsePanelAndRaceText();
+                }
+            });
+
             gbc.gridx = 0;
             gbc.gridy = i;
             horsePanel.add(horseLane, gbc);
@@ -66,6 +114,10 @@ public class RaceGUI extends JFrame {
             gbc.gridx = 3;
             gbc.gridy = i;
             horsePanel.add(horseConfidence, gbc);
+
+            gbc.gridx = 4;
+            gbc.gridy = i;
+            horsePanel.add(editButton, gbc);
         }
 
         // Set up the control panel
@@ -132,7 +184,7 @@ public class RaceGUI extends JFrame {
         centerPanel.add(Box.createVerticalBox().add(horsePanel));
         centerPanel.add(Box.createVerticalBox().add(controlPanel));
 
-        /* add menu functionality*/
+        /* menu functionality*/
 
         // Create a JMenuBar
         JMenuBar menuBar = new JMenuBar();
@@ -201,11 +253,13 @@ public class RaceGUI extends JFrame {
         for (int i = 0; i < horses.size(); i++) {
             // Get the existing labels from the GUI
             Component[] components = horsePanel.getComponents();
-            JLabel horseName = (JLabel) components[i * 4 + 1]; // Adjusted index
-            JLabel horseSymbol = (JLabel) components[i * 4 + 2]; // Adjusted index
-            JLabel horseConfidence = (JLabel) components[i * 4 + 3]; // Adjusted index
+            JLabel horseLane = (JLabel) components[i * 5]; // Adjusted index
+            JLabel horseName = (JLabel) components[i * 5 + 1]; // Adjusted index
+            JLabel horseSymbol = (JLabel) components[i * 5 + 2]; // Adjusted index
+            JLabel horseConfidence = (JLabel) components[i * 5 + 3]; // Adjusted index
 
             // Update the labels
+            horseLane.setText("Lane " + (i + 1));
             horseName.setText("Horse Name: " + horses.get(i).getName());
             horseSymbol.setText("Horse Symbol: " + horses.get(i).getSymbol());
             //round confidence to 2 decimal places
@@ -227,6 +281,52 @@ public class RaceGUI extends JFrame {
             JLabel horseSymbol = new JLabel("Horse Symbol: " + horses.get(i).getSymbol());
             JLabel horseConfidence = new JLabel("Horse Confidence: " + horses.get(i).getConfidence());
 
+            // Create the Edit Horse button for each horse
+            JButton editButton = new JButton("Edit Horse");
+            final int horseIndex = i;
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Create an array of options
+                    Object[] options = {"Edit Horse Name", "Edit Horse Symbol"};
+                    // Display a dialog with the options
+                    int choice = JOptionPane.showOptionDialog(RaceGUI.this, "What would you like to edit?",
+                            "Edit Horse", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                    // Handle the user's choice
+                    switch (choice) {
+                        case 0: // Edit Horse Name
+                            String newName = JOptionPane.showInputDialog(RaceGUI.this, "Enter new name for the horse:");
+                            if (newName == null || newName.isEmpty()){
+                                // User closed the dialog, do nothing
+                                return;
+                            }
+                            // Update the horse's name
+                            else {
+                                Horse horse = horses.get(horseIndex);
+                                horse.resetName(newName);
+                                break;
+                            }
+                        case 1: // Edit Horse Symbol
+                            String newSymbol = JOptionPane.showInputDialog(RaceGUI.this, "Enter new symbol for the horse:");
+                            if (newSymbol == null) {
+                                // User closed the dialog, do nothing
+                                return;
+                            }
+                            if (newSymbol != null && newSymbol.length() == 1) {
+                                // Update the horse's symbol
+                                Horse horse = horses.get(horseIndex);
+                                horse.setSymbol(newSymbol.charAt(0));
+                            }
+                            else {
+                                JOptionPane.showMessageDialog(RaceGUI.this, "Invalid input. Please enter a single character for the horse symbol.");
+                            }
+                            break;
+                    }
+                    // Rebuild the horsePanel to reflect the changes
+                    rebuildHorsePanelAndRaceText();
+                }
+            });
+
             gbc.gridx = 0;
             gbc.gridy = i;
             horsePanel.add(horseLane, gbc);
@@ -242,6 +342,10 @@ public class RaceGUI extends JFrame {
             gbc.gridx = 3;
             gbc.gridy = i;
             horsePanel.add(horseConfidence, gbc);
+
+            gbc.gridx = 4;
+            gbc.gridy = i;
+            horsePanel.add(editButton, gbc);
         }
 
         // Recalculate the preferred size of the text area based on the number of horses

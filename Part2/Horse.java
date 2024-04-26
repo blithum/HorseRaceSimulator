@@ -83,5 +83,10 @@ public class Horse
     public void standUp() {
         fallen = false;
     }
+
+    public void resetName(String newName)
+    {
+        name = newName;
+    }
     
 }
