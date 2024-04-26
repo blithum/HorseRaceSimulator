@@ -60,6 +60,9 @@ public class Race
     public Horse getWinningHorse() {
         return winningHorse;
     }
+    public int getRaceLength() {
+        return this.raceLength;
+    }
     /**
      * Start the race
      * The horse are brought to the start and

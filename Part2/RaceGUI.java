@@ -25,6 +25,8 @@ public class RaceGUI extends JFrame {
     private JButton betButton;
     private int wins;
     private int losses;
+    private int bankTotal = 10;
+    private int betAmount;
     private ArrayList<Horse> selectedHorses = new ArrayList<>();
     private Horse winningHorse;
 
@@ -148,14 +150,14 @@ public class RaceGUI extends JFrame {
                     winningHorse = race.getWinningHorse();
                     if(!selectedHorses.isEmpty()) {
                         if (winningHorse == null) {
-                            losses++;
-                            JOptionPane.showMessageDialog(RaceGUI.this, "You lost!");
+                            bankTotal -= betAmount;
+                            JOptionPane.showMessageDialog(RaceGUI.this, "You lost "+ betAmount + " coins :(");
                         } else if (selectedHorses.contains(winningHorse)) {
-                            wins++;
-                            JOptionPane.showMessageDialog(RaceGUI.this, "You won!");
+                            bankTotal += betAmount;
+                            JOptionPane.showMessageDialog(RaceGUI.this, "You won "+ betAmount + " coins!");
                         } else {
-                            losses++;
-                            JOptionPane.showMessageDialog(RaceGUI.this, "You lost!");
+                            bankTotal -= betAmount;
+                            JOptionPane.showMessageDialog(RaceGUI.this, "You lost "+ betAmount + " coins :(");
                         }
                     }
                     //resets bets
@@ -192,19 +194,42 @@ public class RaceGUI extends JFrame {
         betButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+
                 JFrame betFrame = new JFrame("Place Bet");
-                betFrame.setSize(400, 400);
+                betFrame.setSize(500, 400);
                 betFrame.setLayout(new BorderLayout());
                 betFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                 // Title and win/loss count
-                JLabel titleLabel = new JLabel("Place your bet! Wins: " + wins + " Losses: " + losses);
+                JLabel titleLabel = new JLabel("Place your bet!         Bank Total: "+ bankTotal);
                 betFrame.add(titleLabel, BorderLayout.NORTH);
 
-                // Race statistics
+                // Race odds
                 JTextArea betArea = new JTextArea();
                 betArea.setEditable(false);
-                betFrame.add(betArea, BorderLayout.CENTER);
+
+                //rough calculation for horse chance of winning
+                double totalMoves = 0.0;
+                double totalFalls = 0.0;
+                for (Horse horse : horses) {
+                    double averageMoves = race.getRaceLength() * horse.getConfidence();
+                    double averageFalls = race.getRaceLength() * 0.1 * Math.pow(horse.getConfidence(), 2);
+                    totalMoves += averageMoves;
+                    totalFalls += averageFalls;
+                }
+
+                StringBuilder oddsText = new StringBuilder();
+                for (Horse horse : horses) {
+                    double averageMoves = race.getRaceLength() * horse.getConfidence();
+                    double averageFalls = race.getRaceLength() * 0.1 * Math.pow(horse.getConfidence(), 2);
+                    double winningChance = (averageMoves - averageFalls) / (totalMoves - totalFalls) * 100;
+                    oddsText.append(horse.getName()).append(" winning chances: ").append(String.format("%.2f", winningChance)).append("% Total bets made so far: ").append(horse.getTotalBets()).append("\n");
+                }
+
+                // Set the text of betArea to the calculated odds
+                betArea.setText(oddsText.toString());
+                betFrame.add(new JScrollPane(betArea), BorderLayout.CENTER);
 
                 // List of horses
                 JPanel horsePanel = new JPanel(new GridLayout(horses.size(), 1));
@@ -223,11 +248,25 @@ public class RaceGUI extends JFrame {
                 submitButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        String betAmountStr = JOptionPane.showInputDialog(RaceGUI.this, "Enter your bet amount (0-10):");
+                        betAmount = 0;
+                        try {
+                            betAmount = Integer.parseInt(betAmountStr);
+                            if (betAmount < 0 || betAmount > 10) {
+                                JOptionPane.showMessageDialog(RaceGUI.this, "Invalid bet amount. It should be between 0 and 10.");
+                                return;
+                            }
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(RaceGUI.this, "Invalid input. Please enter a number between 0 and 10.");
+                            return; // If the input is invalid, return from the action listener without creating the JFrame
+                        }
                         // Store the selected horse
                         selectedHorses = new ArrayList<>();
                         for (int i = 0; i < radioButtons.size(); i++) {
                             if (radioButtons.get(i).isSelected()) {
-                                selectedHorses.add(horses.get(i));
+                                Horse selectedHorse = horses.get(i);
+                                selectedHorses.add(selectedHorse);
+                                selectedHorse.increaseTotalBets();
                                 break;
                             }
                         }
@@ -235,6 +274,8 @@ public class RaceGUI extends JFrame {
                         // Display a "Good luck" message and close the betting frame
                         JOptionPane.showMessageDialog(betFrame, "Good luck!");
                         betFrame.dispose();
+
+
                     }
                 });
                 betFrame.add(submitButton, BorderLayout.SOUTH);

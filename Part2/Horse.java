@@ -8,12 +8,13 @@
 public class Horse
 {
     //Fields of class Horse
-    String name;
-    char symbol;
-    int distanceTravelled;
-    boolean fallen;
-    double confidence;
-    int totalWins;
+    private String name;
+    private char symbol;
+    private int distanceTravelled;
+    private boolean fallen;
+    private double confidence;
+    private int totalWins;
+    private int totalBets;
       
     //Constructor of class Horse
     /**
@@ -95,5 +96,13 @@ public class Horse
 
     public int getTotalWins(){
         return this.totalWins;
+    }
+
+    public int getTotalBets(){
+        return this.totalBets;
+    }
+
+    public void increaseTotalBets(){
+        this.totalBets++;
     }
 }
