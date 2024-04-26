@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class RaceGUI extends JFrame {
+    //main panel
     private JPanel welcomePanel;
     private JPanel horsePanel;
     private JPanel controlPanel;
@@ -16,6 +17,10 @@ public class RaceGUI extends JFrame {
     private JPanel options;
     private JButton startButton;
     private JTextArea outputRaceArea;
+
+    //statistics
+    private JFrame statsFrame = new JFrame("Statistics");
+    private JButton statsButton;
 
     private Race race;
     private ArrayList<Horse> horses;
@@ -134,7 +139,21 @@ public class RaceGUI extends JFrame {
                 }).start();
             }
         });
+
+        statsButton = new JButton("View Statistics");
+        statsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                statsFrame.setSize(400, 400);
+                statsFrame.setLayout(new BorderLayout());
+                statsFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                statsFrame.setVisible(true);
+                statsFrame.add(new JLabel("Statistics will be displayed here"));
+            }
+        });
+
         controlPanel.add(startButton);
+        controlPanel.add(statsButton);
 
         // Set up the Race Output Panel
         raceOutputPanel = new JPanel();
