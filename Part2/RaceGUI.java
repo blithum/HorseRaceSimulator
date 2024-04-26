@@ -43,27 +43,30 @@ public class RaceGUI extends JFrame {
         horsePanel.setBackground(new Color(243, 235, 233)); // Light Gray
         horsePanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(5, 15, 5, 15);
 
         for (int i = 0; i < horses.size(); i++) {
-            JLabel horseName = new JLabel(horses.get(i).getName());
-            JLabel horseSymbol = new JLabel(String.valueOf(horses.get(i).getSymbol()));
-            JLabel horseConfidence = new JLabel(String.valueOf(horses.get(i).getConfidence()));
+            JLabel horseLane = new JLabel("Lane " + (i + 1));
+            JLabel horseName = new JLabel("Horse Name: " + horses.get(i).getName());
+            JLabel horseSymbol = new JLabel("Horse Symbol: " + horses.get(i).getSymbol());
+            JLabel horseConfidence = new JLabel("Horse Confidence: " + horses.get(i).getConfidence());
 
             gbc.gridx = 0;
             gbc.gridy = i;
-            horsePanel.add(horseName, gbc);
+            horsePanel.add(horseLane, gbc);
 
             gbc.gridx = 1;
             gbc.gridy = i;
-            horsePanel.add(horseSymbol, gbc);
+            horsePanel.add(horseName, gbc);
 
             gbc.gridx = 2;
             gbc.gridy = i;
+            horsePanel.add(horseSymbol, gbc);
+
+            gbc.gridx = 3;
+            gbc.gridy = i;
             horsePanel.add(horseConfidence, gbc);
         }
-
-
 
         // Set up the control panel
         controlPanel = new JPanel();
@@ -198,15 +201,15 @@ public class RaceGUI extends JFrame {
         for (int i = 0; i < horses.size(); i++) {
             // Get the existing labels from the GUI
             Component[] components = horsePanel.getComponents();
-            JLabel horseName = (JLabel) components[i * 3];
-            JLabel horseSymbol = (JLabel) components[i * 3 + 1];
-            JLabel horseConfidence = (JLabel) components[i * 3 + 2];
+            JLabel horseName = (JLabel) components[i * 4 + 1]; // Adjusted index
+            JLabel horseSymbol = (JLabel) components[i * 4 + 2]; // Adjusted index
+            JLabel horseConfidence = (JLabel) components[i * 4 + 3]; // Adjusted index
 
             // Update the labels
-            horseName.setText(horses.get(i).getName());
-            horseSymbol.setText(String.valueOf(horses.get(i).getSymbol()));
+            horseName.setText("Horse Name: " + horses.get(i).getName());
+            horseSymbol.setText("Horse Symbol: " + horses.get(i).getSymbol());
             //round confidence to 2 decimal places
-            horseConfidence.setText(String.format("%.2f", (horses.get(i).getConfidence())));
+            horseConfidence.setText("Horse Confidence: " + String.format("%.2f", horses.get(i).getConfidence()));
         }
     }
 
@@ -216,22 +219,27 @@ public class RaceGUI extends JFrame {
 
         // Re-add the horse labels based on the updated list of horses
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(5, 15, 5, 15);
 
         for (int i = 0; i < horses.size(); i++) {
-            JLabel horseName = new JLabel(horses.get(i).getName());
-            JLabel horseSymbol = new JLabel(String.valueOf(horses.get(i).getSymbol()));
-            JLabel horseConfidence = new JLabel(String.valueOf(horses.get(i).getConfidence()));
+            JLabel horseLane = new JLabel("Lane " + (i + 1));
+            JLabel horseName = new JLabel("Horse Name: " + horses.get(i).getName());
+            JLabel horseSymbol = new JLabel("Horse Symbol: " + horses.get(i).getSymbol());
+            JLabel horseConfidence = new JLabel("Horse Confidence: " + horses.get(i).getConfidence());
 
             gbc.gridx = 0;
             gbc.gridy = i;
-            horsePanel.add(horseName, gbc);
+            horsePanel.add(horseLane, gbc);
 
             gbc.gridx = 1;
             gbc.gridy = i;
-            horsePanel.add(horseSymbol, gbc);
+            horsePanel.add(horseName, gbc);
 
             gbc.gridx = 2;
+            gbc.gridy = i;
+            horsePanel.add(horseSymbol, gbc);
+
+            gbc.gridx = 3;
             gbc.gridy = i;
             horsePanel.add(horseConfidence, gbc);
         }
