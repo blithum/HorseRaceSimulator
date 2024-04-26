@@ -37,7 +37,11 @@ public class Race
     {
         horses.add(theHorse);
     }
-    
+
+    //Method to get the horses
+    public ArrayList<Horse> getHorses() {
+        return this.horses;
+    }
     /**
      * Start the race
      * The horse are brought to the start and
