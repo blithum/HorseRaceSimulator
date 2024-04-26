@@ -13,8 +13,8 @@ public class RaceGUI extends JFrame {
     private JPanel horsePanel;
     private JPanel controlPanel;
     private JPanel raceOutputPanel;
+    private JPanel options;
     private JButton startButton;
-    private JLabel[] horseLabels;
     private JTextArea outputRaceArea;
 
     private Race race;
@@ -23,7 +23,6 @@ public class RaceGUI extends JFrame {
     public RaceGUI(Race race) {
         this.race = race;
         this.horses = race.getHorses();
-        this.horseLabels = new JLabel[race.getHorses().size()];
 
         // Set up the frame
         setTitle("Horse Race Simulator");
@@ -39,7 +38,7 @@ public class RaceGUI extends JFrame {
         welcomeLabel.setForeground(Color.WHITE); // White text
         welcomePanel.add(welcomeLabel);
 
-        // Set up the racetrack panel
+        // Set up the Horse Stats panel
         horsePanel = new JPanel();
         horsePanel.setBackground(new Color(243, 235, 233)); // Light Gray
         horsePanel.setLayout(new GridBagLayout());
@@ -68,7 +67,7 @@ public class RaceGUI extends JFrame {
 
         // Set up the control panel
         controlPanel = new JPanel();
-        startButton = new JButton("Start");
+        startButton = new JButton("Start Race");
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,13 +79,14 @@ public class RaceGUI extends JFrame {
                 }).start();
             }
         });
-        horsePanel.add(startButton);
+        controlPanel.add(startButton);
 
         // Set up the Race Output Panel
         raceOutputPanel = new JPanel();
         raceOutputPanel.setBackground(new Color(243, 235, 233)); // Light Gray
         raceOutputPanel.setLayout(new BorderLayout());
-        outputRaceArea = new JTextArea(6, 30);
+        //text area size based on how many horses are there
+        outputRaceArea = new JTextArea((horses.size() + 4), 30);
         outputRaceArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         outputRaceArea.setEditable(false);
         outputRaceArea.setBackground(new Color(224, 224, 224)); // Light Gray
@@ -120,13 +120,69 @@ public class RaceGUI extends JFrame {
             }
         }, true));
 
+        // Design center panel
         // Create a new panel with BoxLayout
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 
-        // Add horsePanel and controlPanel to the new panel
-        centerPanel.add(horsePanel);
-        centerPanel.add(controlPanel);
+        // Wrap horsePanel and controlPanel in a Box and add them to the centerPanel
+        centerPanel.add(Box.createVerticalBox().add(horsePanel));
+        centerPanel.add(Box.createVerticalBox().add(controlPanel));
+
+        /* add menu functionality*/
+
+        // Create a JMenuBar
+        JMenuBar menuBar = new JMenuBar();
+
+        // Create a new Edit menu
+        JMenu editMenu = new JMenu("Edit");
+
+        // Create a menu item for the Edit menu
+        JMenuItem changeRaceLength = new JMenuItem("Edit Race Length");
+        JMenuItem addHorse = new JMenuItem("Add horse");
+
+        // Add action listener to the "Edit Race Length" menu item
+        changeRaceLength.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Prompt the user to enter a new race length
+                String input = JOptionPane.showInputDialog(RaceGUI.this, "Enter new race length:");
+                try {
+                    int newRaceLength = Integer.parseInt(input);
+                    if (newRaceLength > 0 && newRaceLength < 100) {
+                        // Update the race length
+                        race.setRaceLength(newRaceLength);
+                    } else {
+                        JOptionPane.showMessageDialog(RaceGUI.this, "Invalid input. Race length must be in the range 0-100.");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(RaceGUI.this, "Change to race length cancelled.");
+                }
+            }
+        });
+
+        // Add action listener to the "Add Horse" menu item
+        addHorse.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Prompt the user to enter details for the new horse
+                String name = JOptionPane.showInputDialog(RaceGUI.this, "Enter horse name:");
+                char symbol = JOptionPane.showInputDialog(RaceGUI.this, "Enter horse symbol:").charAt(0);
+                double confidence = 0.5;
+                // Add the new horse to the race
+                race.addHorse(new Horse(symbol, name, confidence), horses.size() + 1);
+                // Rebuild the horsePanel to reflect the changes
+                rebuildHorsePanelAndRaceText();
+            }
+        });
+
+
+        // Add the "Race Length" menu item to the Edit menu
+        editMenu.add(changeRaceLength);
+        editMenu.add(addHorse);
+
+
+        menuBar.add(editMenu);
+        setJMenuBar(menuBar);
+
 
         // Add panels to the frame
         add(welcomePanel, BorderLayout.NORTH);
@@ -154,18 +210,53 @@ public class RaceGUI extends JFrame {
         }
     }
 
-    private void updateRaceTrack() {
-        for (int i = 0; i < race.getHorses().size(); i++) {
-            Horse horse = race.getHorses().get(i);
-            horseLabels[i].setText(" ".repeat(horse.getDistanceTravelled()) + horse.getName());
+    private void rebuildHorsePanelAndRaceText() {
+        // Clear the existing components in the horsePanel
+        horsePanel.removeAll();
+
+        // Re-add the horse labels based on the updated list of horses
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        for (int i = 0; i < horses.size(); i++) {
+            JLabel horseName = new JLabel(horses.get(i).getName());
+            JLabel horseSymbol = new JLabel(String.valueOf(horses.get(i).getSymbol()));
+            JLabel horseConfidence = new JLabel(String.valueOf(horses.get(i).getConfidence()));
+
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            horsePanel.add(horseName, gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = i;
+            horsePanel.add(horseSymbol, gbc);
+
+            gbc.gridx = 2;
+            gbc.gridy = i;
+            horsePanel.add(horseConfidence, gbc);
         }
+
+        // Recalculate the preferred size of the text area based on the number of horses
+        int numRows = horses.size() + 4; // Adjust based on your preference
+        int numColumns = 30; // Adjust based on your preference
+        outputRaceArea.setColumns(numColumns);
+        outputRaceArea.setRows(numRows);
+
+        // Revalidate and repaint the raceOutputPanel to reflect the changes
+        raceOutputPanel.revalidate();
+        raceOutputPanel.repaint();
+
+        // Revalidate and repaint the horsePanel to reflect the changes
+        horsePanel.revalidate();
+        horsePanel.repaint();
     }
+
 
     public static void main(String[] args) {
         Race race = new Race(20); // Initialize the race
-        race.addHorse(new Horse('A', "Horse A", 0.8), 1);
-        race.addHorse(new Horse('B', "Horse B", 0.7), 2);
-        race.addHorse(new Horse('C', "Horse C", 0.9), 3);
+        race.addHorse(new Horse('A', "Horse A", 0.5), 1);
+        race.addHorse(new Horse('B', "Horse B", 0.5), 2);
+        race.addHorse(new Horse('C', "Horse C", 0.5), 3);
         SwingUtilities.invokeLater(() -> new RaceGUI(race));
     }
 }

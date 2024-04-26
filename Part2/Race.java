@@ -42,6 +42,14 @@ public class Race
     public ArrayList<Horse> getHorses() {
         return this.horses;
     }
+
+    //change race length
+    public void setRaceLength(int newLength)
+    {
+        if (newLength > 0) {
+            raceLength = newLength;
+        }
+    }
     /**
      * Start the race
      * The horse are brought to the start and
